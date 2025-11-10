@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convert Image to Teks by Logis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #000000 100%);
+            color: white;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+        h1 {
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        p {
+            font-weight: 300;
+            margin-bottom: 30px;
+        }
+        input[type="file"] {
+            display: none; /* Sembunyikan input file asli */
+        }
+        label[for="imageInput"] {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 400;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+        label[for="imageInput"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.5);
+        }
+        button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 400;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.5);
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            margin: 20px 0;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            resize: none;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        textarea::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Convert Image to Teks by Logis</h1>
+        <p>Upload gambar yang berisi teks, dan kami akan ekstrak teksnya agar bisa disalin.</p>
+        <input type="file" id="imageInput" accept="image/*">
+        <label for="imageInput">Pilih Gambar</label>
+        <button onclick="extractText()">Konversi Teks</button>
+        <textarea id="outputText" placeholder="Teks hasil ekstraksi akan muncul di sini..." readonly></textarea>
+        <button onclick="copyText()">Salin Teks</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script>
+        async function extractText() {
+            const fileInput = document.getElementById('imageInput');
+            const output = document.getElementById('outputText');
+            
+            if (!fileInput.files[0]) {
+                alert('Pilih gambar terlebih dahulu!');
+                return;
+            }
+            
+            output.value = 'Memproses...';
+            
+            try {
+                const result = await Tesseract.recognize(fileInput.files[0], 'ind+eng', {
+                    logger: m => console.log(m)
+                });
+                output.value = result.data.text;
+            } catch (error) {
+                output.value = 'Error: ' + error.message;
+            }
+        }
+        
+        function copyText() {
+            const output = document.getElementById('outputText');
+            output.select();
+            document.execCommand('copy');
+            alert('Teks berhasil disalin!');
+        }
+    </script>
+</body>
+</html>
